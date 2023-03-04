@@ -14,6 +14,8 @@ public final class Main extends JavaPlugin implements Listener {
 
     public String joinMessage;
     public String leftMessage;
+    public boolean joinMessageEnable;
+    public boolean leftMessageEnable;
 
     @Override
     public void onEnable() {
@@ -41,21 +43,29 @@ public final class Main extends JavaPlugin implements Listener {
         FileConfiguration config = getConfig();
         joinMessage = config.getString("joinMessage", "님이 입장했습니다.");
         leftMessage = config.getString("leftMessage", "님이 퇴장했습니다.");
+        joinMessageEnable = config.getBoolean("joinMessageEnable", true);
+        leftMessageEnable = config.getBoolean("leftMessageEnable", true);
         // Save config
         config.set("joinMessage", "님이 입장했습니다.");
         config.set("leftMessage", "님이 퇴장했습니다.");
+        config.set("joinMessageEnable", true);
+        config.set("leftMessageEnable", true);
         saveConfig();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        event.setJoinMessage(player.getDisplayName() + " " + joinMessage);
+        if (joinMessageEnable) {
+            Player player = event.getPlayer();
+            event.setJoinMessage(player.getDisplayName() + " " + joinMessage);
+        }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        event.setQuitMessage(player.getDisplayName() + " " + leftMessage);
+        if (leftMessageEnable) {
+            Player player = event.getPlayer();
+            event.setQuitMessage(player.getDisplayName() + " " + leftMessage);
+        }
     }
 }
