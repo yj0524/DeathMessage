@@ -41,31 +41,33 @@ public final class Main extends JavaPlugin implements Listener {
     private void loadConfig() {
         // Load chest size from config
         FileConfiguration config = getConfig();
-        joinMessage = config.getString("joinMessage", "님이 입장했습니다.");
-        leftMessage = config.getString("leftMessage", "님이 퇴장했습니다.");
+        joinMessage = config.getString("joinMessage", "[&a+&r] %player% 님이 입장했습니다.");
+        leftMessage = config.getString("leftMessage", "[&c-&r] %player% 님이 퇴장했습니다.");
         joinMessageEnable = config.getBoolean("joinMessageEnable", true);
         leftMessageEnable = config.getBoolean("leftMessageEnable", true);
         // Save config
-        config.set("joinMessage", "님이 입장했습니다.");
-        config.set("leftMessage", "님이 퇴장했습니다.");
-        config.set("joinMessageEnable", true);
-        config.set("leftMessageEnable", true);
+        config.set("joinMessage", joinMessage);
+        config.set("leftMessage", leftMessage);
+        config.set("joinMessageEnable", joinMessageEnable);
+        config.set("leftMessageEnable", leftMessageEnable);
         saveConfig();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (joinMessageEnable) {
-            Player player = event.getPlayer();
-            event.setJoinMessage(player.getDisplayName() + " " + joinMessage);
+            String joinMessage = this.joinMessage.replace("&", "§");
+            String message = joinMessage.replace("%player%", event.getPlayer().getDisplayName());
+            event.setJoinMessage(message);
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (leftMessageEnable) {
-            Player player = event.getPlayer();
-            event.setQuitMessage(player.getDisplayName() + " " + leftMessage);
+            String leftMessage = this.leftMessage.replace("&", "§");
+            String message = leftMessage.replace("%player%", event.getPlayer().getDisplayName());
+            event.setQuitMessage(message);
         }
     }
 }
