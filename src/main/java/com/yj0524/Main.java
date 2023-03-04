@@ -15,6 +15,8 @@ public final class Main extends JavaPlugin implements Listener {
     public String leftMessage;
     public boolean joinMessageEnable;
     public boolean leftMessageEnable;
+    public boolean joinMessageShow;
+    public boolean leftMessageShow;
 
     @Override
     public void onEnable() {
@@ -44,17 +46,24 @@ public final class Main extends JavaPlugin implements Listener {
         leftMessage = config.getString("leftMessage", "[&c-&r] %player% 님이 퇴장했습니다.");
         joinMessageEnable = config.getBoolean("joinMessageEnable", true);
         leftMessageEnable = config.getBoolean("leftMessageEnable", true);
+        joinMessageShow = config.getBoolean("joinMessageShow", true);
+        leftMessageShow = config.getBoolean("leftMessageShow", true);
         // Save config
         config.set("joinMessage", joinMessage);
         config.set("leftMessage", leftMessage);
         config.set("joinMessageEnable", joinMessageEnable);
         config.set("leftMessageEnable", leftMessageEnable);
+        config.set("joinMessageShow", joinMessageShow);
+        config.set("leftMessageShow", leftMessageShow);
         saveConfig();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (joinMessageEnable) {
+        if (!joinMessageShow) {
+            event.setJoinMessage(null);
+        }
+        else if (joinMessageEnable && joinMessageShow) {
             String joinMessage = this.joinMessage.replace("&", "§");
             String message = joinMessage.replace("%player%", event.getPlayer().getDisplayName());
             event.setJoinMessage(message);
@@ -63,7 +72,10 @@ public final class Main extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (leftMessageEnable) {
+        if (!leftMessageShow) {
+            event.setQuitMessage(null);
+        }
+        else if (leftMessageEnable && leftMessageShow) {
             String leftMessage = this.leftMessage.replace("&", "§");
             String message = leftMessage.replace("%player%", event.getPlayer().getDisplayName());
             event.setQuitMessage(message);
