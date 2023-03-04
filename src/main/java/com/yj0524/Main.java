@@ -13,6 +13,7 @@ public final class Main extends JavaPlugin implements Listener {
     public String deathMessage;
     public String naturalDeathMessage;
     public boolean deathMessageEnable;
+    public boolean naturalDeathMessageEnable;
     public boolean deathMessageShow;
 
     @Override
@@ -42,11 +43,13 @@ public final class Main extends JavaPlugin implements Listener {
         deathMessage = config.getString("deathMessage", "&a%deathPlayer%&r 님이 &c%killer%&r 님에게 죽었습니다.");
         naturalDeathMessage = config.getString("naturalDeathMessage", "&a%deathPlayer%&r 님이 &c자연사&r했습니다.");
         deathMessageEnable = config.getBoolean("deathMessageEnable", true);
+        naturalDeathMessageEnable = config.getBoolean("naturalDeathMessageEnable", true);
         deathMessageShow = config.getBoolean("deathMessageShow", true);
         // Save config
         config.set("deathMessage", deathMessage);
         config.set("naturalDeathMessage", naturalDeathMessage);
         config.set("deathMessageEnable", deathMessageEnable);
+        config.set("naturalDeathMessageEnable", naturalDeathMessageEnable);
         config.set("deathMessageShow", deathMessageShow);
         saveConfig();
     }
@@ -62,7 +65,7 @@ public final class Main extends JavaPlugin implements Listener {
             if (event.getEntity().getKiller() != null) {
                 message = message.replace("%killer%", event.getEntity().getKiller().getName());
             }
-            else {
+            else if (naturalDeathMessageEnable){
                 String naturalDeathMessage = this.naturalDeathMessage.replace("&", "§");
                 message = naturalDeathMessage.replace("%deathPlayer%", event.getEntity().getName());
             }
