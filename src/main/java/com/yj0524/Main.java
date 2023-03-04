@@ -3,20 +3,17 @@ package com.yj0524;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
 public final class Main extends JavaPlugin implements Listener {
 
-    public String joinMessage;
-    public String leftMessage;
-    public boolean joinMessageEnable;
-    public boolean leftMessageEnable;
-    public boolean joinMessageShow;
-    public boolean leftMessageShow;
+    public String deathMessage;
+    public String naturalDeathMessage;
+    public boolean deathMessageEnable;
+    public boolean deathMessageShow;
 
     @Override
     public void onEnable() {
@@ -42,43 +39,34 @@ public final class Main extends JavaPlugin implements Listener {
     private void loadConfig() {
         // Load chest size from config
         FileConfiguration config = getConfig();
-        joinMessage = config.getString("joinMessage", "[&a+&r] %player% 님이 입장했습니다.");
-        leftMessage = config.getString("leftMessage", "[&c-&r] %player% 님이 퇴장했습니다.");
-        joinMessageEnable = config.getBoolean("joinMessageEnable", true);
-        leftMessageEnable = config.getBoolean("leftMessageEnable", true);
-        joinMessageShow = config.getBoolean("joinMessageShow", true);
-        leftMessageShow = config.getBoolean("leftMessageShow", true);
+        deathMessage = config.getString("deathMessage", "&a%deathPlayer%&r 님이 &c%killer%&r 님에게 죽었습니다.");
+        naturalDeathMessage = config.getString("naturalDeathMessage", "&a%deathPlayer%&r 님이 &c자연사&r했습니다.");
+        deathMessageEnable = config.getBoolean("deathMessageEnable", true);
+        deathMessageShow = config.getBoolean("deathMessageShow", true);
         // Save config
-        config.set("joinMessage", joinMessage);
-        config.set("leftMessage", leftMessage);
-        config.set("joinMessageEnable", joinMessageEnable);
-        config.set("leftMessageEnable", leftMessageEnable);
-        config.set("joinMessageShow", joinMessageShow);
-        config.set("leftMessageShow", leftMessageShow);
+        config.set("deathMessage", deathMessage);
+        config.set("naturalDeathMessage", naturalDeathMessage);
+        config.set("deathMessageEnable", deathMessageEnable);
+        config.set("deathMessageShow", deathMessageShow);
         saveConfig();
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!joinMessageShow) {
-            event.setJoinMessage(null);
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!deathMessageShow) {
+            event.deathMessage(null);
         }
-        else if (joinMessageEnable && joinMessageShow) {
-            String joinMessage = this.joinMessage.replace("&", "§");
-            String message = joinMessage.replace("%player%", event.getPlayer().getDisplayName());
-            event.setJoinMessage(message);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        if (!leftMessageShow) {
-            event.setQuitMessage(null);
-        }
-        else if (leftMessageEnable && leftMessageShow) {
-            String leftMessage = this.leftMessage.replace("&", "§");
-            String message = leftMessage.replace("%player%", event.getPlayer().getDisplayName());
-            event.setQuitMessage(message);
+        else if (deathMessageEnable && deathMessageShow) {
+            String deathMessage = this.deathMessage.replace("&", "§");
+            String message = deathMessage.replace("%deathPlayer%", event.getEntity().getName());
+            if (event.getEntity().getKiller() != null) {
+                message = message.replace("%killer%", event.getEntity().getKiller().getName());
+            }
+            else {
+                String naturalDeathMessage = this.naturalDeathMessage.replace("&", "§");
+                message = naturalDeathMessage.replace("%deathPlayer%", event.getEntity().getName());
+            }
+            event.setDeathMessage(message);
         }
     }
 }
