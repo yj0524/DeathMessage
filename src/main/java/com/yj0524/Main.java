@@ -38,7 +38,7 @@ public final class Main extends JavaPlugin implements Listener {
     }
 
     private void loadConfig() {
-        // Load chest size from config
+        // Load config
         FileConfiguration config = getConfig();
         deathMessage = config.getString("deathMessage", "&a%deathPlayer%&r 님이 &c%killer%&r 님에게 죽었습니다.");
         naturalDeathMessage = config.getString("naturalDeathMessage", "&a%deathPlayer%&r 님이 &c자연사&r했습니다.");
